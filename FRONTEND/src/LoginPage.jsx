@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
 function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -66,3 +65,30 @@ function LoginPage() {
 }
 
 export default LoginPage;
+
+
+// const [username, setUsername] = useState('');
+// const [password, setPassword] = useState('');
+// const [error, setError] = useState(null);
+// const navigate = useNavigate();
+
+// const handleSubmit = async (event) => {
+//     event.preventDefault();
+//     try {
+//         let response = await fetch('http://localhost:3000/users');
+//         let users = await response.json();
+//         let match = users.find(user => user.username === username);
+//         if (match) {
+//             if (match) {
+//                 navigate('/project');
+//             } else {
+//                 setError('Invalid username or password');
+//             }
+//         } else {
+//             setError('Invalid username or password');
+//         }
+//     } catch (err) {
+//         setError(err);
+//         console.log("No Such Route");
+//     }
+// }

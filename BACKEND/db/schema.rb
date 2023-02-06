@@ -12,8 +12,9 @@
 
 ActiveRecord::Schema[7.0].define(version: 2023_02_02_161338) do
   create_table "projects", force: :cascade do |t|
-    t.string "floor_plan"
-    t.integer "priority_level"
+    t.string "description"
+    t.string "image"
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -26,6 +27,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_02_161338) do
 
   create_table "tasks", force: :cascade do |t|
     t.string "task"
+    t.integer "priority_level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

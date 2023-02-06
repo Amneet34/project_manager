@@ -3,39 +3,33 @@ class ProjectsController < ApplicationController
 
   # GET /projects
   def index
-    @projects = Project.all
-
-    render json: @projects
+   render json: Project.all
   end
 
   # GET /projects/1
   def show
-    render json: @project
+    project = Project.find_by(id:params[:id])
+    render json: project
   end
 
   # POST /projects
   def create
-    @project = Project.create(project_params)
-
-    if @project.save
-      render json: @project, status: :created, location: @project
-    else
-      render json: @project.errors, status: :unprocessable_entity
-    end
+    project = Project.create!(description: params[:description], image: params[:image], name: params[:name])
+    render json: project
   end
 
   # PATCH/PUT /projects/1
   def update
-    if @project.update(project_params)
-      render json: @project
-    else
-      render json: @project.errors, status: :unprocessable_entity
-    end
+    project = Project.find_by(id:params[:id])
+    project.update(description: params[:description], image: params[:image], name: params[:name])
+    render json: project
   end
 
   # DELETE /projects/1
   def destroy
-    @project.destroy
+    project = Project.find_by(id:params[:id])
+    project.destroy 
+    render json: project
   end
 
   private

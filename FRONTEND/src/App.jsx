@@ -6,6 +6,7 @@ import {
 import LoginPage from './LoginPage';
 import SignupPage from './SignupPage';
 import ProjectPage from './ProjectPage';
+import TaskPage from './TaskPage';
 
 
 import './App.css'
@@ -23,6 +24,10 @@ function App() {
     {
       path: "/project",
       element: <ProjectPage />,
+    },
+    {
+      path: "/task",
+      element: <TaskPage />,
     }
   ])
  
