@@ -29,3 +29,22 @@ nav button {
     cursor: pointer;
     font-size: 16px;
 }
+
+.login-box {
+    width: 400px;
+    /* Set the width of the login box */
+    margin: auto;
+    /* Center the login box horizontally */
+    margin-top: 50px;
+    /* Add some space on top of the login box */
+}
+
+.textbox {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
