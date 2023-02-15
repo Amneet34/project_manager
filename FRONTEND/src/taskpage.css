@@ -1,0 +1,29 @@
+.task-btn {
+    background-color: black;
+    /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.task-btn:hover {
+    background-color: rgba(0, 0, 0, 0.531);
+    /* Darker green */
+}
+
+.task-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.076);
+}
+
+.task-btn:active {
+    background-color: black;
+    transform: translateY(1px);
+}

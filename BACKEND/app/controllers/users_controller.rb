@@ -1,51 +1,43 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: %i[ show update destroy ]
+    APP_SECRET = 'password'
+    before_action :authenticate, only: [:show, :me ]
 
-  # GET /users
-  def index
-    @users = User.all
-
-    render json: @users
-  end
-
-  # GET /users/1
-  def show
-    render json: @user
-  end
-
-  # POST /users
-  def create
-    @user = User.new(user_params)
-
-    if @user.save
-      render json: @user, status: :created, location: @user
-    else
-      render json: @user.errors, status: :unprocessable_entity
-    end
-  end
-
-  # PATCH/PUT /users/1
-  def update
-    if @user.update(user_params)
-      render json: @user
-    else
-      render json: @user.errors, status: :unprocessable_entity
-    end
-  end
-
-  # DELETE /users/1
-  def destroy
-    @user.destroy
-  end
-
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = User.find(params[:id])
+    def me
+        render json: {user: @current_user}
     end
 
-    # Only allow a list of trusted parameters through.
-    def user_params
-      params.permit(:username, :password, :email, :name)
+    def index
+        render json: User.all, status: 200
+    end
+
+    def login
+        user = User.find_by(email: params[:email])
+        if user && user.authenticate(params[:password])
+            # encode a token to the send back 
+            token = JWT.encode({user_id: user.id, username: user.username}, APP_SECRET, 'HS256')
+            render json: {user: user, token: token }, status: 200
+        else 
+            render json: {error: 'Invalid username or password'}, status: 422
+        end
+    end
+
+    def create
+        user = User.new(email: params[:email], password: params[:password], username: params[:username])
+        if user.save 
+            # create the token here 
+            render json: {user: user, token: nil}, status: 200
+        else 
+            render json: {error: user.errors.full_messages[0]}, status: 422
+        end
+    end
+    
+    def show
+        user = User.find(params[:id])
+        if @current_user.id == user.id
+            render json: {user: user}, status: 200
+        else 
+            render json: {error: "This ain't you!"}, status: 401
+        end
     end
 end
+

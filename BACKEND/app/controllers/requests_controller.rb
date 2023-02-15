@@ -1,22 +1,20 @@
 class RequestsController < ApplicationController
-  before_action :set_request, only: %i[ show update destroy ]
+  before_action :set_request, only: [:show, :update, :destroy]
 
   # GET /requests
   def index
-   render json: Request.all
+    render json: Request.all
   end
 
   # GET /requests/1
   def show
-    request = Request.find_by!(id: params[:id])
-    render json: request
+    render json: @request
   end
 
   # POST /requests
   def create
-    request = Request.find_by!(id: params[:id])
-    request = Request.create!(user_id: params[:user_id], content: params[:content])
-    
+    request = Request.create!(request_params)
+    render json: request
   end
 
   # PATCH/PUT /requests/1
@@ -30,7 +28,8 @@ class RequestsController < ApplicationController
 
   # DELETE /requests/1
   def destroy
-    request = Request.find_by!(id: params[:id]).destroy!
+    @request.destroy!
+    head :no_content
   end
 
   private
@@ -41,6 +40,7 @@ class RequestsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def request_params
-      params.fetch(:request, {})
+      params.permit(:content, :accepted, :name)
     end
 end
+

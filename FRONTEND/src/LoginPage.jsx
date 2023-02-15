@@ -1,94 +1,71 @@
-import { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
-function LoginPage() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
-    const navigate = useNavigate();
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            let response = await fetch('http://localhost:3000/users');
-            let users = await response.json();
-            let match = users.find(user => user.username === username);
-            if (match) {
-                if (match) {
-                    navigate('/project');
-                } else {
-                    setError('Invalid username or password');
-                }
-            } else {
-                setError('Invalid username or password');
-            }
-        } catch (err) {
-            setError(err);
-            console.log("No Such Route");
-        }
-    }
-
-
+function Profile({ user }) {
     return (
-        <div className="login-box">
-            <form onSubmit={handleSubmit}>
-                <h2>Login</h2>
-                <div className="user-box">
-                    <input type="text" value={username} onChange={e => setUsername(e.target.value)} required />
-                    <label>Username</label>
-                </div>
-                <div className="user-box">
-                    <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
-                    <label>Password</label>
-                </div >
-                <button style={{ background: 'none', border: 'none', padding: '30px' }} type="submit">
-                    <a>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        login
-                    </a></button>
-                <button style={{ background: 'none', border: 'none' }} type="submit" onClick={() => navigate('/Signup')}>
-                    <a >
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        Signup
-                    </a>
-                </button>
-                {error && <p style={{ color: 'red' }}>{error.toString()}</p>}
-            </form>
-        </div>
+        <>
+            <h3>{user.username}</h3>
+        </>
     );
 }
 
+function LoginPage() {
+    const [user, setUser] = useState(null);
+    const form = useRef();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const loadUser = async () => {
+            let req = await fetch("http://127.0.0.1:3000/me", {
+                headers: { 'Authorization': Cookies.get('token') }
+            })
+            let res = await req.json()
+            if (res.user) setUser(res.user)
+        }
+        if (Cookies.get('token'))
+            loadUser()
+    }, [])
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        let formData = new FormData(form.current)
+        let req = await fetch("http://127.0.0.1:3000/login", {
+            method: "POST",
+            body: formData
+        }
+        )
+        let res = await req.json()
+        Cookies.set('token', res.token)
+        setUser(res.user)
+    }
+
+    useEffect(() => {
+        if (user) {
+            navigate('/project')
+        }
+    }, [user])
+
+    return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <form onSubmit={handleSubmit} ref={form} style={{ width: '400px', padding: '20px' }}>
+            <label htmlFor="email">Email:</label>
+            <input type="email" name="email" required />
+            <br />
+            <label htmlFor="password">Password:</label>
+            <input type="password" name="password" required />
+            <br />
+            <button type="submit">Log in</button>
+            <button onClick={() => navigate('/signup')}>Signup</button>
+        </form>
+  { user && <Profile user={user} /> }
+  </div>
+);
+
+
+}
 export default LoginPage;
 
 
-// const [username, setUsername] = useState('');
-// const [password, setPassword] = useState('');
-// const [error, setError] = useState(null);
-// const navigate = useNavigate();
 
-// const handleSubmit = async (event) => {
-//     event.preventDefault();
-//     try {
-//         let response = await fetch('http://localhost:3000/users');
-//         let users = await response.json();
-//         let match = users.find(user => user.username === username);
-//         if (match) {
-//             if (match) {
-//                 navigate('/project');
-//             } else {
-//                 setError('Invalid username or password');
-//             }
-//         } else {
-//             setError('Invalid username or password');
-//         }
-//     } catch (err) {
-//         setError(err);
-//         console.log("No Such Route");
-//     }
-// }
+

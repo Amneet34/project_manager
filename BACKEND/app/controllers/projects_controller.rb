@@ -7,16 +7,32 @@ class ProjectsController < ApplicationController
   end
 
   # GET /projects/1
-  def show
-    project = Project.find_by(id:params[:id])
-    render json: project
+ def show
+  project = Project.find_by(id: params[:id])
+  if project.image.attached?
+    render json: {
+      id: project.id,
+      name: project.name,
+      description: project.description,
+      image_url: rails_blob_url(project.image)
+    }
+  else
+    render json: { error: 'Image not found' }, status: :not_found
   end
-
+end
   # POST /projects
   def create
-    project = Project.create!(description: params[:description], image: params[:image], name: params[:name])
-    render json: project
+  project = Project.create!(project_params)
+  if params[:images]
+    project.image.attach(params[:image])
   end
+  render json: project
+end
+
+  # def create
+  #   project = Project.create!(description: params[:description], image: params[:image], name: params[:name])
+  #   render json: project
+  # end
 
   # PATCH/PUT /projects/1
   def update
@@ -40,6 +56,6 @@ class ProjectsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def project_params
-      params.require(:project).permit(:name, :description, :image)
+      params.permit(:name, :description, :image)
     end
 end

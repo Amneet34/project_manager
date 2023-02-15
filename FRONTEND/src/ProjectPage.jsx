@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import Cookies from 'js-cookie'
 
 const ProjectPage = () => {
     const navigate = useNavigate()
+    const [user, setUser] = useState(null)
     const [selectedProject, setSelectedProject] = useState(null);
     const [projects, setProjects] = useState([]);
     const [newProject, setNewProject] = useState({
@@ -19,6 +20,12 @@ const ProjectPage = () => {
             .then(data => setProjects(data))
             .catch(err => console.log(err));
     }, []);
+
+    const logout = () => {
+        Cookies.remove('token')
+        setUser(null)
+        navigate('/')
+    }
 
     const handleChange = event => {
         setNewProject({ ...newProject, [event.target.name]: event.target.value });
@@ -39,9 +46,13 @@ const ProjectPage = () => {
         try {
             const res = await fetch('http://127.0.0.1:3000/projects', {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                    'Authorization': `Bearer ${Cookies.get('token')}`
+                }
             });
             const data = await res.json();
+            console.log(data)
             setProjects([...projects, data]);
             setNewProject({ name: '', description: '', image: '' });
             setFormOpen(false);
@@ -50,14 +61,33 @@ const ProjectPage = () => {
         }
     };
 
+    const handleDelete = async (projectId) => {
+        try {
+            await fetch(`http://127.0.0.1:3000/projects/${projectId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${Cookies.get('token')}`
+                }
+            });
+            setProjects(projects.filter(project => project.id !== projectId));
+            setSelectedProject(null);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    
+
     return (
         <div>
-            <button onClick={() => navigate('/')}>Signout</button>
-            <div>
-                <button onClick={() => navigate('/task')}>Task</button>
-                <button onClick={() => setFormOpen(!formOpen)}>Create Project</button>
-
-            </div>
+            <nav>
+                <ul>
+                    <button onClick={() => setFormOpen(!formOpen)}>Create Project</button>
+                    <li><button onClick={() => navigate('/task')}>Task</button></li>
+                    <li><button onClick={() => navigate('/request')}>Request</button></li>
+                    <li><button onClick={logout}>Logout</button></li>
+                </ul>
+            </nav>
             {formOpen && (
                 <form onSubmit={handleSubmit}>
                     <label htmlFor="name">Name:</label>
@@ -73,22 +103,33 @@ const ProjectPage = () => {
                 </form>
             )}
             <h1>Project List</h1>
-            <div>
-                <ul>
-                    {projects.map(project => (
-                        <li key={project.id} onClick={() => setSelectedProject(project.id)}>
-                            <h2>{project.name}</h2>
-                            {selectedProject === project.id && (
-                                <>
-                                    <p>{project.description}</p>
-                                    <img src={project.image_url} alt={project.name} />
-                                </>
-                            )}
-                        </li>
-                    ))}
-                </ul>
+          
+                <div className="project-container">
+                <div className="project-list">
+                    <ul>
+                        {projects.map(project => (
+                            <li
+                            key={project.id}
+                            className={selectedProject === project.id ? 'selected' : ''}
+                            onClick={() => setSelectedProject(project.id)}
+                            >
+                                <h2>{project.name}</h2>
+                            <button onClick={() => handleDelete(project.id)}>Delete</button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className="project-details">
+                    {selectedProject && (
+                        <>
+                            <h2>{projects.find(project => project.id === selectedProject).name}</h2>
+                            <p>{projects.find(project => project.id === selectedProject).description}</p>
+                            <img src={`http://localhost:3000/${projects.find(project => project.id === selectedProject).image}`} alt={projects.find(project => project.id === selectedProject).name} />
+                        </>
+                    )}
+                </div>
+
             </div>
-            
         </div>
     );
 };

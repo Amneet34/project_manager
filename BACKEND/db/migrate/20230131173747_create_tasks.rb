@@ -2,8 +2,9 @@ class CreateTasks < ActiveRecord::Migration[7.0]
   def change
     create_table :tasks do |t|
       t.string :name
-      t.string :task
-      t.integer :priority_level
+      t.string :description
+      t.string :priority_level
+      t.boolean :completed, default: false
 
       t.timestamps
     end

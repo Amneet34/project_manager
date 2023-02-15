@@ -1,5 +1,5 @@
 class TasksController < ApplicationController
-  before_action :set_task, only: %i[ show, update, destroy ]
+  before_action :set_task, only: %i[show, update, destroy]
 
   def index
     @tasks = Task.all
@@ -7,7 +7,8 @@ class TasksController < ApplicationController
   end
 
   def show
-    render json: @task
+    task = Task.find_by(id: params[:id])
+    render json: task
   end
 
   def create
@@ -19,13 +20,12 @@ class TasksController < ApplicationController
     end
   end
 
-  def update
-    if @task.update(task_params)
-      render json: @task, status: :ok
-    else
-      render json: { errors: @task.errors }, status: :unprocessable_entity
-    end
-  end
+ def update
+ task = Task.find_by(id: params[:id])
+ task.update(completed: params[:completed])
+ render json: task
+ end
+
 
   def destroy
     @task.destroy
@@ -35,10 +35,11 @@ class TasksController < ApplicationController
   private
 
   def set_task
-    @task = Task.find(params[:id])
+    @task = Task.find_by(id: params[:id])
   end
 
   def task_params
-      params.permit(:name, :priority_level,)
+    params.permit(:name, :priority_level, :description, :completed)
   end
 end
+

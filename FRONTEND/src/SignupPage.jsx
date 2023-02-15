@@ -34,41 +34,33 @@ function SignupPage() {
     }
 
     return (
-        <div>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
             <div className="login-box">
                 <form onSubmit={handleSubmit}>
                     <h2>SignUp</h2>
                     <div className="user-box">
-                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
                         <label>Email</label>
+                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
                     </div>
                     <div className="user-box">
-                        <input type="text" value={name} onChange={e => setName(e.target.value)} required />
                         <label>Name</label>
+                        <input type="text" value={name} onChange={e => setName(e.target.value)} required />
                     </div>
                     <div className="user-box">
-                        <input type="text" value={newUser} onChange={e => setNewUser(e.target.value)} required />
                         <label>Username</label>
+                        <input type="text" value={newUser} onChange={e => setNewUser(e.target.value)} required />
                     </div >
                     <div className="user-box">
-                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
                         <label>Password</label>
+                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
                     </div >
-                    <button style={{ background: 'none', border: 'none' }} type="submit">
-                        <a >
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            Create Account
-                        </a>
-                    </button>
+                    <button type="submit">Create Account</button>
                     {error && <p style={{ color: 'red' }}>{error}</p>}
                 </form>
             </div>
         </div>
-
     );
+
 }
 
 export default SignupPage;
