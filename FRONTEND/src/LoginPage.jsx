@@ -49,6 +49,7 @@ function LoginPage() {
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <form onSubmit={handleSubmit} ref={form} style={{ width: '400px', padding: '20px' }}>
+                <h3>Construction Management </h3>
             <label htmlFor="email">Email:</label>
             <input type="email" name="email" required />
             <br />
